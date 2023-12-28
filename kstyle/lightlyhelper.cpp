@@ -62,7 +62,8 @@ namespace Lightly
                 }
             });
         }
-       this->backgroundImages["menuBackground"] = QPixmap("/home/maiku/Pictures/kdecoration/spoiled_brat_by_totailyahumanbeing_dgffepl_copy.png");
+       // this->backgroundImages["menuBackground"] = QPixmap("/home/maiku/Pictures/kdecoration/spoiled_brat_by_totailyahumanbeing_dgffepl_copy.png");
+       this->backgroundImages["menuBackground"] = QPixmap("/home/maiku/Pictures/fish.png");
     }
 
     //____________________________________________________________________
