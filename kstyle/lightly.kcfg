@@ -40,7 +40,7 @@
     <entry name="CornerRadius" type = "Int">
        <default>6</default>
        <min>1</min>
-       <max>8</max>
+       <max>8000</max>
     </entry>
 
   </group>
@@ -243,6 +243,31 @@
     
     <entry name="DolphinSidebarOpacity" type="Int">
         <default>60</default>
+    </entry>
+
+    <entry name="DrawBackgroundImages" type="Bool">
+      <default>true</default>
+    </entry>
+
+    <entry name="DrawMenuBackgroundImage" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="MenuBackgroundImageOpacity" type="Int">
+        <default>12</default>
+    </entry>
+
+    <entry name="DrawTooltipBackgroundImage" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="TooltipBackgroundImageOpacity" type="Int">
+        <default>12</default>
+    </entry>
+
+    <entry name="DrawComboBoxBackgroundImage" type="Bool">
+      <default>true</default>
+    </entry>
+    <entry name="ComboBoxBackgroundImageOpacity" type="Int">
+        <default>12</default>
     </entry>
 
   </group>

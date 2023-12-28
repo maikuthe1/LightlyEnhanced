@@ -65,6 +65,23 @@ namespace Lightly
         connect( _kTextEditDrawFrame, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
         connect( _widgetDrawShadow, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
         connect( _transparentDolphinView, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
+
+        // Draw background images
+        connect( _drawBackgroundImages, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
+
+        // Menu background images
+        connect( _drawMenuBackgroundImage, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
+        connect( _menuBackgroundImageOpacity, &QAbstractSlider::valueChanged, this, &StyleConfig::updateChanged );
+
+        // Tooltip background images
+        connect( _drawTooltipBackgroundImage, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
+        connect( _tooltipBackgroundImageOpacity, &QAbstractSlider::valueChanged, this, &StyleConfig::updateChanged );
+
+
+        // Combo box background images
+        connect( _drawComboBoxBackgroundImage, &QAbstractButton::toggled, this, &StyleConfig::updateChanged );
+        connect( _comboBoxBackgroundImageOpacity, &QAbstractSlider::valueChanged, this, &StyleConfig::updateChanged );
+
         connect( _cornerRadius, SIGNAL(valueChanged(int)), SLOT(updateChanged()) );
 
     }
@@ -93,6 +110,22 @@ namespace Lightly
         StyleConfigData::setWidgetDrawShadow( _widgetDrawShadow->isChecked() );
         StyleConfigData::setTransparentDolphinView( _transparentDolphinView->isChecked() );
         StyleConfigData::setCornerRadius( _cornerRadius->value() );
+
+        // Draw background images
+        StyleConfigData::setDrawBackgroundImages(_drawBackgroundImages->isChecked());
+
+        // Draw menu background image
+        StyleConfigData::setDrawMenuBackgroundImage(_drawMenuBackgroundImage->isChecked());
+        StyleConfigData::setMenuBackgroundImageOpacity( _menuBackgroundImageOpacity->value() );
+
+        // Draw tooltip background image
+        StyleConfigData::setDrawTooltipBackgroundImage(_drawTooltipBackgroundImage->isChecked());
+        StyleConfigData::setTooltipBackgroundImageOpacity( _tooltipBackgroundImageOpacity->value() );
+
+        // Draw combo box background image
+        StyleConfigData::setDrawComboBoxBackgroundImage(_drawComboBoxBackgroundImage->isChecked());
+        StyleConfigData::setComboBoxBackgroundImageOpacity( _comboBoxBackgroundImageOpacity->value() );
+
 
         StyleConfigData::self()->save();
 
@@ -146,6 +179,21 @@ namespace Lightly
         else if( _widgetDrawShadow->isChecked() != StyleConfigData::widgetDrawShadow() ) modified = true;
         else if( _transparentDolphinView->isChecked() != StyleConfigData::transparentDolphinView() ) modified = true;
         else if( _cornerRadius->value() != StyleConfigData::cornerRadius() ) modified = true;
+
+        // Draw background images
+        else if( _drawBackgroundImages->isChecked() != StyleConfigData::drawBackgroundImages() ) modified = true;
+
+        // Draw menu background images
+        else if( _drawMenuBackgroundImage->isChecked() != StyleConfigData::drawMenuBackgroundImage() ) modified = true;
+        else if( _menuBackgroundImageOpacity->value() != StyleConfigData::menuBackgroundImageOpacity() ) modified = true;
+
+        // Draw tooltip background images
+        else if( _drawTooltipBackgroundImage->isChecked() != StyleConfigData::drawTooltipBackgroundImage() ) modified = true;
+        else if( _tooltipBackgroundImageOpacity->value() != StyleConfigData::tooltipBackgroundImageOpacity() ) modified = true;
+
+        // Draw combo box background images
+        else if( _drawComboBoxBackgroundImage->isChecked() != StyleConfigData::drawComboBoxBackgroundImage() ) modified = true;
+        else if( _comboBoxBackgroundImageOpacity->value() != StyleConfigData::comboBoxBackgroundImageOpacity() ) modified = true;
         
 
         emit changed(modified);
@@ -178,6 +226,20 @@ namespace Lightly
         _transparentDolphinView->setChecked( StyleConfigData::transparentDolphinView() );
         _cornerRadius->setValue( StyleConfigData::cornerRadius() );
 
+        // Draw background images
+        _drawBackgroundImages->setChecked( StyleConfigData::drawBackgroundImages() );
+
+        // Draw menu background images
+        _drawMenuBackgroundImage->setChecked( StyleConfigData::drawMenuBackgroundImage() );
+        _menuBackgroundImageOpacity->setValue( StyleConfigData::menuBackgroundImageOpacity() );
+
+        // Draw tooltip background images
+        _drawTooltipBackgroundImage->setChecked( StyleConfigData::drawTooltipBackgroundImage() );
+        _tooltipBackgroundImageOpacity->setValue( StyleConfigData::tooltipBackgroundImageOpacity() );
+
+        // Draw combo box background images
+        _drawComboBoxBackgroundImage->setChecked( StyleConfigData::drawComboBoxBackgroundImage() );
+        _comboBoxBackgroundImageOpacity->setValue( StyleConfigData::comboBoxBackgroundImageOpacity() );
 
     }
 

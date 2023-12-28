@@ -62,6 +62,7 @@ namespace Lightly
                 }
             });
         }
+       this->backgroundImages["menuBackground"] = QPixmap("/home/maiku/Pictures/kdecoration/spoiled_brat_by_totailyahumanbeing_dgffepl_copy.png");
     }
 
     //____________________________________________________________________
@@ -484,14 +485,47 @@ namespace Lightly
         // set pen
         painter->setPen( Qt::NoPen );
 
+
+
         // set brush
         /*if( color.isValid() ) painter->setBrush( color );
-        else*/ painter->setBrush( color );
-        
-        
+        else*/
+        QColor newColor;
+        newColor.setRgb(255,0,0);
+        painter->setBrush( color );
+
 
         // render
         painter->drawRoundedRect( frameRect.adjusted(-1, -1, 1, 1), radius, radius );
+//         if (!this->image.isNull())
+//         {
+//             // Calculate the aspect ratio of the image
+//             qreal aspectRatio = static_cast<qreal>(this->image.width()) / this->image.height();
+//
+//             // Determine the target size as 20% of the rect's size
+//             int targetWidth = rect.width() * 0.4;
+//             int targetHeight = rect.height() * 0.4;
+//
+//             // Calculate the new size while maintaining aspect ratio
+//             QSize newSize;
+//             if (this->image.width() > this->image.height()) {
+//                 // Width is the limiting factor
+//                 newSize.setWidth(targetWidth);
+//                 newSize.setHeight(targetWidth / aspectRatio);
+//             } else {
+//                 // Height is the limiting factor
+//                 newSize.setHeight(targetHeight);
+//                 newSize.setWidth(targetHeight * aspectRatio);
+//             }
+//
+//             // Position the image in the bottom right corner
+//             QPoint position(rect.right() - newSize.width(), rect.bottom() - newSize.height());
+//
+//             QPixmap scaledImage = this->image.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+//
+//             // Draw the image
+//             painter->drawPixmap(QRect(position, newSize), scaledImage);
+//         }
 
     }
 
@@ -543,10 +577,10 @@ namespace Lightly
     //______________________________________________________________________________
     void Helper::renderMenuFrame(
         QPainter* painter, const QRect& rect,
-        const QColor& color, const QColor& outline, bool roundCorners ) const
+        const QColor& color, const QColor& outline, bool roundCorners) const
     {
 
-
+        //QColor newColor = QColor(255,0,0);
         // set brush
         if( color.isValid() ) painter->setBrush( color );
         else painter->setBrush( Qt::NoBrush );
@@ -562,6 +596,62 @@ namespace Lightly
 
             // render
             painter->drawRoundedRect( frameRect, radius, radius );
+
+            const QPixmap& backgroundImage = this->backgroundImages["menuBackground"];
+
+            if (!backgroundImage.isNull() && StyleConfigData::drawBackgroundImages() && StyleConfigData::drawMenuBackgroundImage())
+            {
+                // Calculate the aspect ratio of the image
+                qreal aspectRatio = static_cast<qreal>(backgroundImage.width()) / backgroundImage.height();
+
+                // Determine the target width as the full width of the rect
+                int targetWidth = rect.width();
+
+                // Calculate the height to maintain the aspect ratio
+                int targetHeight = targetWidth / aspectRatio;
+
+                // Create the new size
+                 QSize newSize(targetWidth, targetHeight);
+
+                // Position the image at the bottom left of the rect
+                QPoint position(rect.left(), rect.bottom() - targetHeight);
+
+                // Scale the image while maintaining aspect ratio
+                QPixmap scaledImage = backgroundImage.scaled(newSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+                // Create a new QPixmap for the transparent image
+                QPixmap transparentImage(newSize);
+                transparentImage.fill(Qt::transparent);
+
+                // Create a QPainter to draw the scaled image onto the transparent pixmap
+                QPainter p(&transparentImage);
+                p.setCompositionMode(QPainter::CompositionMode_Source);
+
+                // Set a clipping path to round the corners of the image
+                QPainterPath clipPath;
+                // Calculate the top-left corner for the clipping path
+                int clipX = (newSize.width() - frameRect.width());
+                int clipY = (newSize.height() - frameRect.height());
+
+                // Add the rounded rectangle to the clipping path
+                clipPath.addRoundedRect(clipX, clipY + 1, frameRect.width(), frameRect.height(), radius + 0.5, radius + 0.5);
+
+                // Apply the clipping path to the painter
+                p.setClipPath(clipPath);
+
+                // Draw the scaled image
+                p.drawPixmap(0, 0, scaledImage);
+
+                // Set the alpha value (0-255, where 255 is fully opaque and 0 is fully transparent)
+                quint32 alpha = (StyleConfigData::menuBackgroundImageOpacity() * 255) / 100; // Example: semi-transparent
+                p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+                p.fillRect(transparentImage.rect(), QColor(0, 0, 0, alpha));
+                p.end();
+
+                // Draw the transparent image
+                painter->drawPixmap(QRect(position, newSize), transparentImage);
+            }
+
             
             //outline
             if( outline.isValid() )
@@ -614,7 +704,9 @@ namespace Lightly
         if( !StyleConfigData::widgetDrawShadow() ) return;
         Q_UNUSED(active)
         //if (!active) {renderOutline(painter, rect, cornerRadius, 30);return;}
-        CustomShadowParams params = CustomShadowParams( QPoint(xOffset, yOffset), size, color );
+        QColor newColor = color;
+        newColor.setAlphaF(color.alphaF() / 2.3);
+        CustomShadowParams params = CustomShadowParams( QPoint(xOffset, yOffset), size, newColor );
         TileSet shadow = ShadowHelper::shadowTiles( cornerRadius, params );
         shadow.render( rect.adjusted(-params.radius, -params.radius, params.radius + params.offset.x(), params.radius + params.offset.y() ) , painter, tiles);
         //qDebug() << "shadow on: " << rect.adjusted(-params.radius, -params.radius, params.radius, params.radius);
@@ -642,7 +734,7 @@ namespace Lightly
         int ty = rect.top() - size + yOffset;
         int tw = rect.width() + size * 2;
         int th = rect.height() + size * 2;
-        float alpha = color.alphaF();
+        float alpha = color.alphaF() / 2.3;
         
         while (tx <= rect.left() + qMax(xOffset, yOffset)) {
             
@@ -1180,7 +1272,7 @@ namespace Lightly
             }
             else {
                 renderBoxShadow( painter, frameRect, 0, 1, 4, background.darker(220), radius, windowActive );
-                renderOutline( painter, frameRect, radius, 4 );
+                //renderOutline( painter, frameRect, radius, 4 );
             }
             painter->setBrush( mouseOver ? background.lighter(110) : background );
             painter->drawRoundedRect( frameRect, radius, radius );

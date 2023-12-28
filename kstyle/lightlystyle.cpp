@@ -69,6 +69,7 @@
 
 #if LIGHTLY_HAVE_QTQUICK
 #include <QQuickWindow>
+#include <QGraphicsDropShadowEffect>
 #endif
 
 //#include <QDebug>
@@ -1431,11 +1432,11 @@ namespace Lightly
             {
 
                 painter.setCompositionMode( QPainter::CompositionMode_Source );
-                _helper->renderMenuFrame( &painter, rect, background, outline, true );
+                _helper->renderMenuFrame( &painter, rect, background, outline, true);
 
             } else {
 
-                _helper->renderMenuFrame( &painter, rect, background, outline, false );
+                _helper->renderMenuFrame( &painter, rect, background, outline, false);
 
             }
 
@@ -1469,7 +1470,7 @@ namespace Lightly
             // render
             if( dockWidget->isFloating() )
             {
-                _helper->renderMenuFrame( &painter, rect, background, outline, false );
+                _helper->renderMenuFrame( &painter, rect, background, outline, false);
 
             } else if( StyleConfigData::dockWidgetDrawFrame() || (dockWidget->features()&QDockWidget::AllDockWidgetFeatures) ) {
     
@@ -1593,9 +1594,8 @@ namespace Lightly
                 painter.drawRect( rect );
 
             } else {
-
                 // framed painting
-                _helper->renderMenuFrame( &painter, rect, background, QColor() );
+                _helper->renderMenuFrame( &painter, rect, background, QColor()); // remove true
 
             }
 
@@ -3470,6 +3470,7 @@ namespace Lightly
             }*/
 
             const auto background( isTitleWidget ? palette.color( widget->backgroundRole() ) : palette.color( QPalette::Base ) );
+
             _helper->renderFrame( painter, rect, background, palette, windowActive, enabled );
 
         }
@@ -3573,7 +3574,7 @@ namespace Lightly
             const auto outline( _helper->frameOutlineColor( palette ) );
 
             const bool hasAlpha( _helper->hasAlphaChannel( widget ) );
-            _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha );
+            _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha);
 
         } else if( isQtQuickControl( option, widget ) ) {
 
@@ -3582,7 +3583,8 @@ namespace Lightly
             const auto outline( _helper->frameOutlineColor( palette ) );
 
             const bool hasAlpha( _helper->hasAlphaChannel( widget ) );
-            _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha );
+            quint32 v = QRandomGenerator::global()->bounded(0, 255);
+            _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha);
 
         }
 
@@ -3709,7 +3711,7 @@ namespace Lightly
 
         // render frame outline
         const auto outline( _helper->frameOutlineColor( palette, false, selected ) );
-        _helper->renderMenuFrame( painter, rect, QColor(), outline );
+        _helper->renderMenuFrame( painter, rect, QColor(), outline, true);
 
         return true;
 
@@ -4050,8 +4052,7 @@ namespace Lightly
         if ( hasAlpha ) {
             background.setAlphaF(StyleConfigData::menuOpacity() / 100.0);
         }
-
-        _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha );
+        _helper->renderMenuFrame( painter, option->rect, background, outline, hasAlpha);
 
         return true;
 
@@ -4069,8 +4070,7 @@ namespace Lightly
         const auto &background = palette.color( QPalette::ToolTipBase );
         //const auto outline( KColorUtils::mix( palette.color( QPalette::ToolTipBase ), palette.color( QPalette::ToolTipText ), 0.25 ) );
         const bool hasAlpha( _helper->hasAlphaChannel( widget ) );
-
-        _helper->renderMenuFrame( painter, option->rect, background, QColor(), hasAlpha );
+        _helper->renderMenuFrame( painter, option->rect, background, QColor(), hasAlpha);
         return true;
 
     }
@@ -5203,6 +5203,8 @@ namespace Lightly
     bool Style::drawMenuItemControl( const QStyleOption* option, QPainter* painter, const QWidget* widget ) const
     {
 
+        QColor shadowColor(0,0,0,100);
+
         // cast option and check
         const auto menuItemOption = qstyleoption_cast<const QStyleOptionMenuItem*>( option );
         if( !menuItemOption ) return true;
@@ -5328,7 +5330,6 @@ namespace Lightly
 
         if( showIcon && !menuItemOption->icon.isNull() )
         {
-
             iconRect = visualRect( option, iconRect );
 
             // icon mode
@@ -5339,10 +5340,11 @@ namespace Lightly
             else mode = QIcon::Disabled;
 
             // icon state
-            const QIcon::State iconState( sunken ? QIcon::On:QIcon::Off );
-            const QPixmap icon = _helper->coloredIcon(menuItemOption->icon, menuItemOption->palette, iconRect.size(), mode, iconState);
-            painter->drawPixmap( iconRect, icon );
+            const QIcon::State iconState( sunken ? QIcon::On : QIcon::Off );
+            QPixmap icon = _helper->coloredIcon(menuItemOption->icon, menuItemOption->palette, iconRect.size(), mode, iconState);
 
+            // Draw icon
+            painter->drawPixmap(iconRect, icon);
         }
 
         // arrow
@@ -5404,8 +5406,24 @@ namespace Lightly
 
             }
 
-            // render text
             const int textFlags( Qt::AlignVCenter | (reverseLayout ? Qt::AlignRight : Qt::AlignLeft ) | _mnemonics->textFlags() );
+
+
+            // Configure shadow properties
+            QColor shadowColor(0,0,0,30); // Shadow color
+            int shadowOffsetX = 1; // Horizontal shadow offset
+            int shadowOffsetY = 1; // Vertical shadow offset
+
+            // shadow palette
+            QPalette shadowPalette;
+            shadowPalette.setColor(role, shadowColor);
+
+            // render shadow
+            QRect shadowRect = textRect.translated(shadowOffsetX, shadowOffsetY);
+            drawItemText(painter, shadowRect, textFlags, shadowPalette, enabled, text, role);
+
+
+            // render text
             textRect = option->fontMetrics.boundingRect( textRect, textFlags, text );
             drawItemText( painter, textRect, textFlags, palette, enabled, text, role );
 

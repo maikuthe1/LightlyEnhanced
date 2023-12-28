@@ -1,24 +1,12 @@
-<p align="center">
-  <img src="logo.png"/>
-</p>
+**This is a personal fork of boehs/lightly where I customize the KStyle to my likings**
 
-**This is a personal fork of lightly where I merge pull requests sent to [Luwx/Lightly](https://github.com/Luwx/Lightly)**
-
-*Lightly* is a fork of breeze theme style that aims to be visually modern and minimalistic.
-
-# Notes about this fork
-
-- Do not open pull requests directly here unless they change/require some code that has diverged from upstream
-- If the pull request can sucessfully be merged into [Luwx/Lightly](https://github.com/Luwx/Lightly), please open it there and I will merge it here. My intention is not for this to be a permanent fork (hopefully Luwx comes back!)
-- Similarly, don't open issues here unless the issue was likely caused by some code here that's not in [Luwx/Lightly](https://github.com/Luwx/Lightly)
-
-These rules are because I don't want to diverge too far from upstream. It should be easy for Luwx to catch up.
-
-Thanks ❤️🐢
+*Lightly Enhanced* is a fork of boehs/Lightly which is a fork of Lightly which is a fork of breeze theme style that aims to be visually modern and minimalistic but also highly customizable.
 
 ## Development ⚠️
 
-Lightly is a work in progress theme, there is still a lot to change, so expect bugs! Some applications may suddenly crash or flicker.
+Lightly Enhanced is a work in progress theme, there is still a lot to change, so expect bugs! Some applications may suddenly crash or flicker.
+
+The rest of this readme is from the original Lightly repo and doesn't represent the current look of the KStyle, I will update this later
 
 ## Screenshots
 

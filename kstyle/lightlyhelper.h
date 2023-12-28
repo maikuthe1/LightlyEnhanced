@@ -34,6 +34,25 @@
 #include <QPainterPath>
 #include <QIcon>
 #include <QWidget>
+#include <QPixmap>
+#include <QFile>
+#include <QMap>
+#include <QRandomGenerator>
+#include <QBitmap>
+
+struct AnimeImage
+{
+    QPixmap pixmap;
+    int alpha = 255;
+
+    AnimeImage(const QString& filePath, int alpha)
+    {
+        this->pixmap = QPixmap(filePath);
+        this->alpha = alpha;
+    }
+
+
+};
 
 namespace Lightly
 {
@@ -45,6 +64,8 @@ namespace Lightly
         Q_OBJECT
         
         public:
+
+        QMap<QString, QPixmap> backgroundImages;
 
         //* constructor
         explicit Helper( KSharedConfig::Ptr, QObject *parent = nullptr );
@@ -168,7 +189,7 @@ namespace Lightly
         void renderSidePanelFrame( QPainter*, const QRect&, const QColor& outline, Side ) const;
 
         //* menu frame
-        void renderMenuFrame( QPainter*, const QRect&, const QColor& color, const QColor& outline, bool roundCorners = true ) const;
+        void renderMenuFrame( QPainter*, const QRect&, const QColor& color, const QColor& outline, bool roundCorners = true) const;
         
         //* outline for widgets
         void renderOutline(QPainter* painter, const QRectF& rect, const int radius, const int outlineStrength ) const;

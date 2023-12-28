@@ -219,6 +219,7 @@ namespace Lightly
 
         auto withOpacity = [](const QColor &color, qreal opacity) -> QColor {
             QColor c(color);
+            // c.setAlphaF(opacity);
             c.setAlphaF(opacity);
             return c;
         };
